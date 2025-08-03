@@ -36,9 +36,13 @@ const AccountPopover = ({ anchorEl, onClose }) => {
     >
       <Stack spacing={1} alignItems="center">
         <Avatar sx={{ width: 56, height: 56 }}>
-          {user?.name?.[0]?.toUpperCase() || 'U'}
+          {user?.company?.[0]?.toUpperCase() || 'U'}
         </Avatar>
-        <Typography variant="subtitle1">{user?.name || t('unknown_user')}</Typography>
+
+        <Typography variant="subtitle1">
+          {user?.company || t('unknown_user')}
+        </Typography>
+
         <Typography variant="body2" color="text.secondary">
           {user?.email || t('no_email')}
         </Typography>

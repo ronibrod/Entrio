@@ -13,6 +13,8 @@ export default {
     no_account: "Don't have an account?",
     logout: "Logout",
   },
+  unknown_user: "Unknown user",
+  no_email: "No email",
   dashboard: "Dashboard",
   no_description: "No description",
   year: "Year",
@@ -42,4 +44,5 @@ export default {
   settings: "Settings",
   language: "Language",
   account: "Account",
+  add_solution: "Add Solution",
 }

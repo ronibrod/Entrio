@@ -44,7 +44,17 @@ const SolutionCard = ({ solution, categories, fetchSolutions }) => {
       }}
     >
       <CardContent sx={{ flex: 1 }}>
-        <Stack>
+        <Stack
+          sx={{
+            bgcolor: '#f5f5f5',
+            p: 0.5,
+            borderRadius: 2,
+            overflowY: 'auto',
+            height: '23vh',
+            scrollbarWidth: 'none',
+            '&::-webkit-scrollbar': { display: 'none' },
+          }}
+        >
           <Typography textAlign="center" variant="h6" fontWeight="bold">
             {solution.name}
           </Typography>
@@ -64,7 +74,7 @@ const SolutionCard = ({ solution, categories, fetchSolutions }) => {
       </CardContent>
       <Button
         variant="text"
-        sx={{ mt: 1, mx: 2, mb: 2, bgcolor: '#f5f5f5' }}
+        sx={{ mx: 2, mb: 2, bgcolor: '#f5f5f5' }}
         onClick={() => handleOpenDialog(solution)}
       >
         {t('view')}
@@ -74,11 +84,11 @@ const SolutionCard = ({ solution, categories, fetchSolutions }) => {
         onClose={handleCloseDialog}
         solution={selectedSolution}
         categories={categories}
-        onDelete={(id) => {
+        onDelete={() => {
           handleCloseDialog()
           fetchSolutions()
         }}
-        onSave={(updated) => {
+        onSave={() => {
           handleCloseDialog()
           fetchSolutions()
         }}

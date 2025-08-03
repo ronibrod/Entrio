@@ -1,8 +1,13 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react'
 import axios from 'axios'
 
 const UserContext = createContext()
-
 export const useUser = () => useContext(UserContext)
 
 export const UserProvider = ({ children }) => {
@@ -22,56 +27,67 @@ export const UserProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    setAuthHeader();
+    setAuthHeader()
     const checkSession = async () => {
       try {
-        const { data } = await axios.get('/api/auth/me');
-        setUser(data);
+        const { data } = await axios.get('/api/auth/me')
+        setUser(data)
       } catch {
-        setUser(null);
+        setUser(null)
       } finally {
-        setInitialLoad(true);
+        setInitialLoad(true)
       }
-    };
+    }
 
-    checkSession();
-  }, []);
+    checkSession()
+  }, [])
+
+  const fetchCurrentUser = async () => {
+    const { data } = await axios.get('/api/auth/me')
+    return data
+  }
 
   const signin = useCallback(async (company, password) => {
     try {
-      const { data } = await axios.post('/api/auth/login', { company, password });
-      localStorage.setItem('token', data.token);
-      setAuthHeader();
-      setUser(null);
-      setAuthError(null);
-      return data;
+      const { data } = await axios.post('/api/auth/login', { company, password })
+      localStorage.setItem('token', data.token)
+      setAuthHeader()
+
+      const me = await fetchCurrentUser()
+      setUser(me)
+
+      setAuthError(null)
+      return me
     } catch (error) {
-      setUser(null);
-      setAuthError(error);
-      throw error;
+      setUser(null)
+      setAuthError(error)
+      throw error
     }
-  }, []);
+  }, [])
 
   const signup = useCallback(async (company, password) => {
     try {
-      const { data } = await axios.post('/api/auth/signup', { company, password });
-      localStorage.setItem('token', data.token);
-      setAuthHeader();
-      setUser(null);
-      setAuthError(null);
-      return data;
+      const { data } = await axios.post('/api/auth/signup', { company, password })
+      localStorage.setItem('token', data.token)
+      setAuthHeader()
+
+      const me = await fetchCurrentUser()
+      setUser(me)
+
+      setAuthError(null)
+      return me
     } catch (error) {
-      setUser(null);
-      setAuthError(error);
-      throw error;
+      setUser(null)
+      setAuthError(error)
+      throw error
     }
-  }, []);
+  }, [])
 
   const signout = useCallback(() => {
-    localStorage.removeItem('token');
-    delete axios.defaults.headers.common['Authorization'];
-    setUser(null);
-  }, []);
+    localStorage.removeItem('token')
+    delete axios.defaults.headers.common['Authorization']
+    setUser(null)
+  }, [])
 
   return (
     <UserContext.Provider
@@ -86,5 +102,5 @@ export const UserProvider = ({ children }) => {
     >
       {children}
     </UserContext.Provider>
-  );
+  )
 }

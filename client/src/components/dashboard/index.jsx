@@ -9,6 +9,7 @@ import {
   InputAdornment,
   IconButton,
   CircularProgress,
+  Button,
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import Axios from 'axios'
@@ -16,7 +17,11 @@ import SolutionsDropzone from './SolutionsDropzone'
 import SolutionCard from './SolutionCard'
 import SearchIcon from '@mui/icons-material/Search'
 import ClearIcon from '@mui/icons-material/Clear'
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline' // אייקון למחיקה
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import AddIcon from '@mui/icons-material/Add'
+import SolutionDialog from './SolutionDialog'
+
+const excludedCategoryNames = ['software', 'hardware']
 
 const DashboardManagement = () => {
   const { t } = useTranslation()
@@ -25,6 +30,7 @@ const DashboardManagement = () => {
   const [categories, setCategories] = useState([])
   const [selectedCategories, setSelectedCategories] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
+  const [addDialogOpen, setAddDialogOpen] = useState(false)
 
   const fetchSolutions = async () => {
     try {
@@ -70,6 +76,17 @@ const DashboardManagement = () => {
     return matchesSearch && matchesCategories
   })
 
+  const getCompetitorsFor = (solution) => {
+    const relevantCategoryIds = categories
+      .filter((cat) => solution.categories?.includes(cat._id) && !excludedCategoryNames.includes(cat.name.toLowerCase()))
+      .map((cat) => cat._id)
+
+    return solutions.filter((s) =>
+      s._id !== solution._id &&
+      s.categories?.some((catId) => relevantCategoryIds.includes(catId))
+    )
+  }
+
   return (
     <Stack sx={{ width: '100%', height: '100%', alignItems: 'center', bgcolor: '#eee', p: 2 }}>
       <Stack width="100%" px={2} direction="row" justifyContent="space-between" alignItems="center">
@@ -93,19 +110,11 @@ const DashboardManagement = () => {
               borderRadius: 1,
               backgroundColor: '#f5f5f5',
               color: 'black',
-              '& input': {
-                color: 'black',
-              },
-              '& fieldset': {
-                border: 'none',
-              },
+              '& input': { color: 'black' },
+              '& fieldset': { border: 'none' },
             },
-            '& .MuiInputLabel-root': {
-              color: '#555',
-            },
-            '& .Mui-focused .MuiInputLabel-root': {
-              color: '#333',
-            },
+            '& .MuiInputLabel-root': { color: '#555' },
+            '& .Mui-focused .MuiInputLabel-root': { color: '#333' },
           }}
           InputProps={{
             startAdornment: (
@@ -131,9 +140,7 @@ const DashboardManagement = () => {
             overflowX: 'auto',
             overflowY: 'hidden',
             scrollbarWidth: 'none',
-            '&::-webkit-scrollbar': {
-              display: 'none',
-            },
+            '&::-webkit-scrollbar': { display: 'none' },
           }}
         >
           <Box sx={{ display: 'inline-flex', gap: 1, px: 1, pb: 2, alignItems: 'center' }}>
@@ -162,8 +169,6 @@ const DashboardManagement = () => {
                 />
               )
             })}
-
-
           </Box>
         </Box>
         {selectedCategories.length > 0 && (
@@ -174,7 +179,20 @@ const DashboardManagement = () => {
       </Stack>
 
       <Stack width='100%'>
-        <Typography variant="h6" py={1} px={4}>{t('all_solutions')}</Typography>
+        <Stack width='100%' direction="row" justifyContent="space-between" alignItems="center" px={4}>
+          <Typography variant="h6" py={1}>
+            {t('all_solutions')}
+          </Typography>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            sx={{ bgcolor: '#ddd', color: 'black', '&:hover': { bgcolor: '#ccc' } }}
+            onClick={() => setAddDialogOpen(true)}
+          >
+            {t('add_solution')}
+          </Button>
+        </Stack>
+
         <Divider variant="middle" sx={{ width: '100%', mb: 2 }} />
       </Stack>
 
@@ -204,7 +222,7 @@ const DashboardManagement = () => {
               }}
             >
               <SolutionCard
-                solution={solution}
+                solution={{ ...solution, competitors: getCompetitorsFor(solution) }}
                 categories={categories}
                 fetchSolutions={fetchSolutions}
               />
@@ -212,6 +230,17 @@ const DashboardManagement = () => {
           ))}
         </Box>
       )}
+
+      <SolutionDialog
+        open={addDialogOpen}
+        onClose={() => setAddDialogOpen(false)}
+        solution={null}
+        categories={categories}
+        onSave={() => {
+          setAddDialogOpen(false)
+          fetchSolutions()
+        }}
+      />
     </Stack>
   )
 }

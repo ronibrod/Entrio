@@ -11,6 +11,7 @@ import {
   TextField,
   Chip,
   Autocomplete,
+  Link,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import Axios from 'axios'
@@ -127,6 +128,27 @@ const SolutionDialog = ({ open, onClose, solution, categories, onDelete, onSave 
             disableClearable
             size="small"
           />
+
+          {solution?.url && (
+            <Typography variant="body2">
+              🔗 {t('url')}: <Link href={solution.url} target="_blank" rel="noopener noreferrer">{solution.url}</Link>
+            </Typography>
+          )}
+
+          {solution?.competitors?.length > 0 && (
+            <>
+              <Typography variant="body2" mt={2}>
+                🆚 {t('competitors')}:
+              </Typography>
+              <ul style={{ paddingLeft: '1.2em', marginTop: 0 }}>
+                {solution.competitors.map((comp) => (
+                  <li key={comp._id}>
+                    <Typography variant="body2">{comp.name}</Typography>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </Stack>
       </DialogContent>
 

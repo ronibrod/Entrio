@@ -13,6 +13,8 @@ export default {
     no_account: "אין לך חשבון?",
     logout: "התנתקות",
   },
+  unknown_user: "משתמש לא ידוע",
+  no_email: "אין אימייל",
   dashboard: "לוח ניהול",
   no_description: "אין תיאור",
   year: "שנה",
@@ -42,4 +44,5 @@ export default {
   settings: "הגדרות",
   language: "שפה",
   account: "חשבון",
+  add_solution: "הוסף פתרון",
 }
